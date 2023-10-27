@@ -1,0 +1,12 @@
+module api {
+    typedef octet byteArray[4*1024];
+
+    interface DataNode {
+        byteArray read(in long block_id);
+        void append(in long block_id, in byteArray bytes);
+        long randomBlockId();
+    };
+
+    interface NameNode{
+        //todo： 把函数写进来
+};
