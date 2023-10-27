@@ -23,6 +23,14 @@ public class FileDesc {
 
 
     //todo：这里要怎么初始化呢？
+    public FileDesc(){
+        this.id = -1;
+        this.mode = 0b00;
+        this.size = 0;
+        this.create_time = 0;
+        this.modified_time = 0;
+        this.access_time = 0;
+    }
     public FileDesc(long id, int mode, long size, long create_time, long modified_time, long access_time) {
         this.id = id;
         this.mode = mode;
@@ -40,8 +48,16 @@ public class FileDesc {
         this.mode = mode;
     }
 
+    public void setAccess_time(long access_time) {
+        this.access_time = access_time;
+    }
+
+    public void setModified_time(long modified_time) {
+        this.modified_time = modified_time;
+    }
+
     /* The following method is for conversion,
-            so we can have interface that return string, which is easy to write in idl */
+                    so we can have interface that return string, which is easy to write in idl */
     //这两个函数在干什么？？？
     @Override
     public String toString() {
