@@ -22,7 +22,6 @@ public class FileDesc {
     //List<int> block_ids; //记录所在的block id
 
 
-    //todo：这里要怎么初始化呢？
     public FileDesc(){
         this.id = -1;
         this.mode = 0b00;
@@ -56,8 +55,24 @@ public class FileDesc {
         this.modified_time = modified_time;
     }
 
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public void setCreate_time(long create_time) {
+        this.create_time = create_time;
+    }
+
+    public void setDn_block(Map<int, List<int>> dn_block) {
+        this.dn_block = dn_block;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     /* The following method is for conversion,
-                    so we can have interface that return string, which is easy to write in idl */
+                                    so we can have interface that return string, which is easy to write in idl */
     //这两个函数在干什么？？？
     @Override
     public String toString() {

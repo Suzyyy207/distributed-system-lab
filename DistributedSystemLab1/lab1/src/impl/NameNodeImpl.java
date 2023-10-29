@@ -13,8 +13,8 @@ public class NameNodeImpl extends NameNodePOA {
     private List<FileDesc> file_descriptor;   //元数据列表
     private HashMap<String, int> path_descriptor;   //file_path -> descriptor
 
+    //初始化，读取fsimage并载入
     public NameNodeImpl(){
-        //读取fsimage数据
         StringBuilder json_content = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader("fsimage.json"))) {
             String line;
