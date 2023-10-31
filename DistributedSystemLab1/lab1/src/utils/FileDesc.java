@@ -12,12 +12,14 @@ public class FileDesc {
      * client2 tries again and get a new FileDesc with a new id 0x88a
      */
     final long id;    //每个文件的id
+    String filepath;
     int mode;
     long size; // 文件大小
     long create_time; // 创建时间
     long modified_time; // 最后修改时间
     long access_time; // 最后访问时间
-    Map<int, List<int>> dn_block; //文件数据块所在的dn与block id，采取一一对应关系
+    int data_node;
+    List<int> block_id;//文件数据块所在的dn与block id，采取一一对应关系
     //List<int> data_nodes; // 文件的数据块所在的DataNode列表
     //List<int> block_ids; //记录所在的block id
 
@@ -29,18 +31,34 @@ public class FileDesc {
         this.create_time = 0;
         this.modified_time = 0;
         this.access_time = 0;
+        this.filepath = "";
+        this.data_node = -1;
+        List<data_node> block_id = new ArrayList<>();
     }
-    public FileDesc(long id, int mode, long size, long create_time, long modified_time, long access_time) {
+    public FileDesc(long id, int mode, long size, long create_time, long modified_time,
+                    long access_time, String filepath,int data_node, List<int> block_id) {
         this.id = id;
         this.mode = mode;
         this.size = size;
         this.create_time = create_time;
         this.modified_time = modified_time;
         this.access_time = access_time;
+        this.filepath = filepath;
+        this.data_node = data_node;
+        this.block_id = new ArrayList<>();
+        this.block_id.addAll(block_id);
     }
 
     public int getMode() {
         return mode;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getFilepath() {
+        return filepath;
     }
 
     public void setMode(int mode) {
@@ -69,6 +87,10 @@ public class FileDesc {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public void setFilepath(String filepath){
+        this.filepath = filepath;
     }
 
     /* The following method is for conversion,
