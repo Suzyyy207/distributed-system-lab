@@ -32,7 +32,26 @@ public class ClientImpl implements Client{
 
     @Override
     public byte[] read(int fd) {
-        return new byte[0];
+        FileDesc file = this.fd_file.get(fd);
+        if (file == null){
+            return -1;
+        }
+
+        int data_node_id = file.getData_node();
+        byte[] old_data = new byte[0];
+        byte[] all_data = new byte[0];
+        blocks_id = file.getBlock_id();
+        for (int id: blocks_id){
+            byte[] new_data = data_nodes[data_node_id].read(id);
+            all_data = new byte[new_data.length + old_data.length];
+            System.arraycopy(old_data, 0, all_data, 0, old_data.length);
+            System.arraycopy(new_data, 0, all_data, new_data.length, new_data.length);
+            old_data = new byte[all_data.length];
+            old_data = all_data;
+        }
+
+
+        return all_data;
     }
 
     @Override

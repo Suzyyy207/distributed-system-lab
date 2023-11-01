@@ -57,6 +57,14 @@ public class FileDesc {
         return id;
     }
 
+    public int getData_node() {
+        return data_node;
+    }
+
+    public List<int> getBlock_id() {
+        return block_id;
+    }
+
     public String getFilepath() {
         return filepath;
     }

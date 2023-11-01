@@ -9,6 +9,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 
+// todo： NameNode要有一个函数实现接受DN的block id信息
 public class NameNodeImpl extends NameNodePOA {
     private List<FileDesc> file_descriptor;   //元数据列表
     private HashMap<String, int> path_descriptor;   //file_path -> descriptor
