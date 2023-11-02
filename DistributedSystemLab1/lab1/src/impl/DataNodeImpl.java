@@ -32,26 +32,43 @@ public class DataNodeImpl extends DataNodePOA {
     }
 
     @Override
-    public void append(int block_id, byte[] bytes) {
+    public int append(int block_id, byte[] bytes) {
+        int new_allocated_id = -1;
+
         //针对之前没有分配过块的文件，先roll一个id
         if (block_id == -1){
-            byte[] new_block = new byte[];
+            byte[] new_block = new byte[0];
             blocks.add(new_block);
             block_id = this.blocks.size() - 1;
+            new_allocated_id = block_id;
         }
 
         //修改块数据
-        byte[] block_data = this.blocks.get(block_id);
-        int new_data_len = bytes.length;
-        int block_len = block_data.length;
-        byte[] new_block_data = new byte[new_data_len + block_len];
-        System.arraycopy(block_data, 0, new_block_data, 0, block_len);
-        for (int i = block_len; i < block_len + new_data_len; i++){
-            new_block_data[i] = bytes[i - block_len];
-        }
+        byte[] old_data = this.blocks.get(block_id);
+        int free_space = 4*1024 - block_data.length;
 
-        //更新list
-        this.blocks.set(block_id,new_block_data);
+        if (bytes.length > free_space){
+            //先装满一个块
+            byte[] new_data = Arrays.copyOfRange(bytes, 0, free_space);
+            int old_data_len = old_data.length;
+            int new_data_len = new_data.length;
+            byte[] all_data = new byte[new_data_len + old_data_len];
+            System.arraycopy(old_data, 0, all_data, 0, old_data_len);
+            System.arraycopy(new_data, 0, all_data, old_data_len, new_data_len);
+            this.blocks.set(block_id,all_data);
+
+            //剩下的装进新的块
+            byte[] left_data = Arrays.copyOfRange(bytes, free_space, bytes.length);
+            new_allocated_id = this.append(-1, left_data);
+        }
+        else{
+            int new_data_len = bytes.length;
+            int old_data_len = old_data.length;
+            byte[] all_data = new byte[new_data_len + old_data_len];
+            System.arraycopy(old_data, 0, all_data, 0, old_data_len);
+            System.arraycopy(new_data, 0, all_data, old_data_len, new_data_len);
+            this.blocks.set(block_id,all_data);
+        }
 
         //更新本地文件
         List<String> base64_list = new ArrayList<>();
@@ -67,11 +84,17 @@ public class DataNodeImpl extends DataNodePOA {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return new_allocated_id;
     }
 
     @Override
     public int randomBlockId() {
         int length = this.blocks.size();
+        if (length == 0){
+            return -1;
+        }
+
         Random random = new Random();
         int random_id = random.nextInt(length) ;
 

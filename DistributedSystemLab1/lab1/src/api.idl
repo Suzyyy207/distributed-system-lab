@@ -3,10 +3,12 @@ module api {
 
     interface DataNode {
         byteArray read(in long block_id);
-        void append(in long block_id, in byteArray bytes);
+        long append(in long block_id, in byteArray bytes);
         long randomBlockId();
     };
 
     interface NameNode{
-        //todo： 把函数写进来
+        string open(in string filepath, in long mode);
+        void close(in string filepath);
+
 };

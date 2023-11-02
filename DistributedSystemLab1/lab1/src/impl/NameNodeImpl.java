@@ -36,7 +36,7 @@ public class NameNodeImpl extends NameNodePOA {
     public String open(String filepath, int mode) {
         int descriptor_id = this.path_descriptor.get(filepath);
 
-        //对于不存在的文件，创建
+        //对于不存在的文件，创建，file的id是index+1
         if (descriptor_id == null){
             int next_id = file_descriptor.length + 1;
             long time_now = System.currentTimeMillis();
@@ -57,24 +57,20 @@ public class NameNodeImpl extends NameNodePOA {
         file.setMode(mode);
 
         //todo：传回需要的信息
-        String fd = file.toString();
-        return fd;
+        String meta_data = file.toString();
+        return meta_data;
     }
 
+    public void modifyBlockID(String filepath, int new_block_id){
+        int descriptor_id = this.path_descriptor.get(filepath);
+        FileDesc file = file_descriptor.get(descriptor_id - 1);
+        file.addBlockID(new_block_id);
+    }
 
     @Override
     public void close(String filepath) {
         int descriptor_id = this.path_descriptor.get(filepath);
-        if(descriptor_id == null){
-            //todo: 错误处理
-        }
-
         FileDesc file = file_descriptor.get(descriptor_id - 1);
-
-        //关闭了没有打开过的文件
-        if (!(file.getMode() & 0b11)){
-            return;
-        }
 
         //修改元数据：访问时间/修改时间/模式
         long time_now = System.currentTimeMillis();

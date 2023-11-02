@@ -101,17 +101,22 @@ public class FileDesc {
         this.filepath = filepath;
     }
 
+    public void addBlockID(int new_block_id){
+        this.block_id.add(new_block_id);
+    }
+
     /* The following method is for conversion,
                                     so we can have interface that return string, which is easy to write in idl */
     //这两个函数在干什么？？？
     @Override
     public String toString() {
-        String fd;
-        fd = Integer.toString(this.id);
-        return fd;
+        return null;
+        // 输出: Hello, World! Welcome to Java!
+
     }
 
     public static FileDesc fromString(String str){
+
         return null;
     }
 }
