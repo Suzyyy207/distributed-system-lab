@@ -110,13 +110,35 @@ public class FileDesc {
     //这两个函数在干什么？？？
     @Override
     public String toString() {
-        return null;
-        // 输出: Hello, World! Welcome to Java!
+        String metadata = "";
+        metadata += Long.toString(this.id)+"\n";
+        metadata += this.filepath +"\n";
+        metadata += Integer.toString(this.mode)+"\n";
+        metadata += Long.toString(this.size)+"\n";
+        metadata += Long.toString(this.create_time)+"\n";
+        metadata += Long.toString(this.modified_time)+"\n";
+        metadata += Long.toString(this.access_time)+"\n";
+        metadata += Integer.toString(this.data_node)+"\n";
+        for(int bid: this.block_id){
+            metadata += Integer.toString(bid)+"\n";
+        }
 
+        return metadata;
     }
 
     public static FileDesc fromString(String str){
-
+        String[] metadata = str.split("\n");
+        this.id = Long.parseLong(metadata[0]);
+        this.filepath = metadata[1];
+        this.mode = Integer.parseInt(metadata[2]);
+        this.size = Long.parseLong(metadata[3]);
+        this.create_time = Long.parseLong(metadata[4]);
+        this.modified_time = Long.parseLong(metadata[5]);
+        this.access_time = Long.parseLong(metadata[6]);
+        this.data_node = Integer.parseInt(metadata[7]);
+        for (int i = 8; i<metadata.length; i++){
+            this.addBlockID(Integer.parseInt(metadata[i]));
+        }
         return null;
     }
 }
