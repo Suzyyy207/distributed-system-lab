@@ -10,5 +10,7 @@ module api {
     interface NameNode{
         string open(in string filepath, in long mode);
         void close(in string filepath);
+        void modifyBlockID(in string filepath, in long new_block_id);
+    };
 
 };
