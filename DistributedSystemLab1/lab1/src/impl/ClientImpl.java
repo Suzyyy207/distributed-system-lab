@@ -63,6 +63,8 @@ public class ClientImpl implements Client{
             }
         }
 
+        return 0;
+
     }
 
     @Override
