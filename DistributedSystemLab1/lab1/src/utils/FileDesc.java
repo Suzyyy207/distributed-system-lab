@@ -1,6 +1,12 @@
 package utils;
 
 //TODO: According to your design, complete the FileDesc class, which wraps the information returned by NameNode open()
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
+
 public class FileDesc {
     /* the id should be assigned uniquely during the lifetime of NameNode,
      * so that NameNode can know which client's open has over at close
@@ -11,7 +17,7 @@ public class FileDesc {
      * after a while client1 call close() with the FileDesc of id 0x889.
      * client2 tries again and get a new FileDesc with a new id 0x88a
      */
-    final long id;    //每个文件的id
+    final int id;    //每个文件的id
     String filepath;
     int mode;
     long size; // 文件大小
@@ -19,7 +25,7 @@ public class FileDesc {
     long modified_time; // 最后修改时间
     long access_time; // 最后访问时间
     int data_node;
-    List<int> block_id;//文件数据块所在的dn与block id，采取一一对应关系
+    List<Integer> block_id;//文件数据块所在的dn与block id，采取一一对应关系
     //List<int> data_nodes; // 文件的数据块所在的DataNode列表
     //List<int> block_ids; //记录所在的block id
 
@@ -33,10 +39,10 @@ public class FileDesc {
         this.access_time = 0;
         this.filepath = "";
         this.data_node = -1;
-        List<data_node> block_id = new ArrayList<>();
+        List<Integer> block_id = new ArrayList<>();
     }
     public FileDesc(long id, int mode, long size, long create_time, long modified_time,
-                    long access_time, String filepath,int data_node, List<int> block_id) {
+                    long access_time, String filepath,int data_node, List<Integer> block_id) {
         this.id = id;
         this.mode = mode;
         this.size = size;
@@ -61,7 +67,7 @@ public class FileDesc {
         return data_node;
     }
 
-    public List<int> getBlock_id() {
+    public List<Integer> getBlock_id() {
         return block_id;
     }
 
@@ -89,14 +95,6 @@ public class FileDesc {
         this.create_time = create_time;
     }
 
-    public void setDn_block(Map<int, List<int>> dn_block) {
-        this.dn_block = dn_block;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public void setFilepath(String filepath){
         this.filepath = filepath;
     }
@@ -111,7 +109,7 @@ public class FileDesc {
     @Override
     public String toString() {
         String metadata = "";
-        metadata += Long.toString(this.id)+"\n";
+        metadata += Integer.toString(this.id)+"\n";
         metadata += this.filepath +"\n";
         metadata += Integer.toString(this.mode)+"\n";
         metadata += Long.toString(this.size)+"\n";
@@ -128,7 +126,7 @@ public class FileDesc {
 
     public static FileDesc fromString(String str){
         String[] metadata = str.split("\n");
-        this.id = Long.parseLong(metadata[0]);
+        //this.id = Long.parseLong(metadata[0]);   //??对final 怎么改变
         this.filepath = metadata[1];
         this.mode = Integer.parseInt(metadata[2]);
         this.size = Long.parseLong(metadata[3]);

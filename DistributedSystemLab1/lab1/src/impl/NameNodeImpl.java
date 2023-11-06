@@ -1,18 +1,20 @@
 package impl;
 //TODO: your implementation
 import api.NameNodePOA;
+import utils.*;
 import java.util.HashMap;
-import utils;
+import java.util.List;
+import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.File;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.List;
 
 // todo： NameNode要有一个函数实现接受DN的block id信息
 public class NameNodeImpl extends NameNodePOA {
     private List<FileDesc> file_descriptor;   //元数据列表
-    private HashMap<String, int> path_descriptor;   //file_path -> descriptor
+    private HashMap<String, Integer> path_descriptor;   //file_path -> descriptor
 
     //初始化，读取fsimage并载入
     public NameNodeImpl(){
@@ -38,11 +40,11 @@ public class NameNodeImpl extends NameNodePOA {
 
         //对于不存在的文件，创建，file的id是index+1
         if (descriptor_id == null){
-            int next_id = file_descriptor.length + 1;
+            int next_id = this.file_descriptor.size() + 1;
             long time_now = System.currentTimeMillis();
             //todo: 怎么roll data node
             int data_node = 0;
-            List<int> block_id = new ArrayList<>();
+            List<Integer> block_id = new ArrayList<>();
             block_id.add(-1);
             this.file_descriptor.add(new FileDesc(next_id,mode,0,time_now,
                     time_now,time_now,filepath,data_node,block_id));
@@ -51,7 +53,7 @@ public class NameNodeImpl extends NameNodePOA {
         FileDesc file = file_descriptor.get(descriptor_id - 1);
 
         //检查文件是否以w模式open过
-        if (file.getMode() & 0b10){
+        if ((file.getMode() & 0b10) != 0 ){
             return null;
         }
         file.setMode(mode);
@@ -75,7 +77,7 @@ public class NameNodeImpl extends NameNodePOA {
         //修改元数据：访问时间/修改时间/模式
         long time_now = System.currentTimeMillis();
         file.setAccess_time(time_now);
-        if (file.mode & 0b10){
+        if ((file.getMode() & 0b10) != 0){
             file.setModified_time(time_now);
         }
         file.setMode(0b00);

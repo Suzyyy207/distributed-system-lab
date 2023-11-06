@@ -2,6 +2,14 @@ package impl;
 //TODO: your implementation
 import api.DataNodePOA;
 import java.util.Random;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.File;
+import utils.*;
 
 public class DataNodeImpl extends DataNodePOA {
     private List<byte[]> blocks;
@@ -45,7 +53,7 @@ public class DataNodeImpl extends DataNodePOA {
 
         //修改块数据
         byte[] old_data = this.blocks.get(block_id);
-        int free_space = 4*1024 - block_data.length;
+        int free_space = 4*1024 - old_data.length;
 
         if (bytes.length > free_space){
             //先装满一个块
@@ -66,7 +74,7 @@ public class DataNodeImpl extends DataNodePOA {
             int old_data_len = old_data.length;
             byte[] all_data = new byte[new_data_len + old_data_len];
             System.arraycopy(old_data, 0, all_data, 0, old_data_len);
-            System.arraycopy(new_data, 0, all_data, old_data_len, new_data_len);
+            System.arraycopy(bytes, 0, all_data, old_data_len, new_data_len);
             this.blocks.set(block_id,all_data);
         }
 
