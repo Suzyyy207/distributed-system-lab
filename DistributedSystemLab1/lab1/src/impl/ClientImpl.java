@@ -110,7 +110,10 @@ public class ClientImpl implements Client{
             return;
         }
         String filepath = file.getFilepath();
-        this.name_node.close(filepath);
+        //只有写修改namenode的mode
+        if ((file.getMode() & 0b10) != 0b00){
+            this.name_node.close(filepath);
+        }
         this.fd_file.remove(fd);
         this.my_files.remove(file);
     }

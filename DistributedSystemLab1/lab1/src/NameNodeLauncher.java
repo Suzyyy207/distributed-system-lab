@@ -1,4 +1,9 @@
-import com.sun.corba.se.spi.orb.ORB;
+import org.omg.CORBA.ORB;
+import org.omg.PortableServer.*;
+import org.omg.CosNaming.NamingContextExt;
+import org.omg.CosNaming.NamingContextExtHelper;
+import org.omg.CosNaming.NameComponent;
+
 import java.util.Properties;
 import impl.*;
 import api.*;
