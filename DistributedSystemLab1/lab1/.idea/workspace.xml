@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b5cf97a0-d105-4aa5-9564-703e8c309891" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/DataNodeLauncher.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../lab1 实验报告.md" beforeDir="false" afterPath="$PROJECT_DIR$/../lab1 实验报告.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/java-chat-corba" beforeDir="false" afterPath="$PROJECT_DIR$/java-chat-corba" afterDir="false" />
@@ -15,7 +14,6 @@
       <change beforePath="$PROJECT_DIR$/java-chat-corba/.idea/misc.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/java-chat-corba/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/java-chat-corba/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/NameNodeLauncher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/NameNodeLauncher.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/impl/ClientImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/impl/ClientImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -86,7 +84,7 @@
       <workItem from="1699096877600" duration="2604000" />
       <workItem from="1699266640334" duration="6375000" />
       <workItem from="1699323000593" duration="2162000" />
-      <workItem from="1699365361885" duration="1872000" />
+      <workItem from="1699365361885" duration="2566000" />
     </task>
     <servers />
   </component>

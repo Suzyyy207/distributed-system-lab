@@ -8,11 +8,45 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.omg.CORBA.ORB;
+import org.omg.PortableServer.*;
+import org.omg.CosNaming.NamingContextExt;
+import org.omg.CosNaming.NamingContextExtHelper;
+import org.omg.CosNaming.NameComponent;
+import java.util.Properties;
+
 public class ClientImpl implements Client{
     private NameNode name_node;
     private DataNode[] data_nodes = new DataNode[MAX_DATA_NODE];
     private List<FileDesc> my_files;
     private HashMap<Integer, FileDesc> fd_file;
+    private static final int MAX_DATA_NODE = 2;
+
+    public ClientImpl() {
+        Arrays.fill(ids, -1);
+        try {
+            String[] args = {};
+            Properties properties = new Properties();
+            properties.put("org.omg. CORBA. ORBInitialHost", "127.0.0.1"); //ORB IP
+            properties.put("org.omg. CORBA. ORBInitialPort", "1050");
+
+            ORB orb = ORB.init(args, properties);
+
+            org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
+            NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
+
+            this.name_node = NameNodeHelper.narrow(ncRef.resolve_str("NameNode"));
+            System.out.println("NameNode is obtained.");
+
+            for (int dataNodeld = 0; dataNodeld < MAX_DATA_NODE; dataNodeId++) {
+                dataNodes[dataNodeId] = DataNodeHelper.narrow(ncRef.resolve_str("DataNode" + dataNodeId));
+                System.out.printin("DataNode" + dataNodeId + " is obtained.");
+            }
+
+        } catch (Exception e) {
+            e.print(StackTrace);
+        }
+    }
 
     //设定：map的时候将新文件的fd map为现在文件的长度+1
     @Override
