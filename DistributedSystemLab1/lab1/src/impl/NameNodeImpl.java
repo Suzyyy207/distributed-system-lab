@@ -5,11 +5,8 @@ import utils.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.File;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.*;
+//import com.fasterxml.jackson.databind.ObjectMapper;
 
 // todo： NameNode要有一个函数实现接受DN的block id信息
 public class NameNodeImpl extends NameNodePOA {
@@ -18,8 +15,24 @@ public class NameNodeImpl extends NameNodePOA {
 
     //初始化，读取fsimage并载入
     public NameNodeImpl(){
-        String filepath = "../data/fsimage.json";
-        ObjectMapper objectMapper = new ObjectMapper();
+        String filepath = "../data/fsimage.txt";
+        try (FileReader reader = new FileReader(filepath);
+             BufferedReader br = new BufferedReader(reader)
+        ) {
+            String line;
+            //网友推荐更加简洁的写法
+            while ((line = br.readLine()) != null) {
+                // 一次读入一行数据
+                String line_str =line.replace("\n", "");
+                FileDesc my_file = FileDesc.fromString(line_str);
+                this.file_descriptor.add(my_file);
+                this.path_descriptor.put(my_file.getFilepath(), my_file.getId());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+       /* ObjectMapper objectMapper = new ObjectMapper();
         path_descriptor = new HashMap<>();
 
         try {
@@ -30,7 +43,7 @@ public class NameNodeImpl extends NameNodePOA {
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("load fsimage error");
-        }
+        }*/
 
     }
 
@@ -80,17 +93,29 @@ public class NameNodeImpl extends NameNodePOA {
         if ((file.getMode() & 0b10) != 0){
             file.setModified_time(time_now);
         }
+        //这里要改，先不动
         file.setMode(0b00);
 
         //更新fsimage
-        ObjectMapper objectMapper = new ObjectMapper();
+        String filepath = "../data/fsimage.txt";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
+            for (FileDesc my_file : this.file_descriptor) {
+                String data = my_file.toString();
+                writer.write(data);
+                writer.newLine();  // 添加换行符
+            }
+            System.out.println("data in fsimage");
+        } catch (IOException e) {
+            System.err.println("error in fsimage update");
+        }
+
+        /*ObjectMapper objectMapper = new ObjectMapper();
         try {
             objectMapper.writeValue(new File("fsimage.json"), this.file_descriptor);
             System.out.println("save fsimage");
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-
+        }*/
     }
 }

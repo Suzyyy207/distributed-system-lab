@@ -109,16 +109,16 @@ public class FileDesc {
     @Override
     public String toString() {
         String metadata = "";
-        metadata += Integer.toString(this.id)+"\n";
-        metadata += this.filepath +"\n";
-        metadata += Integer.toString(this.mode)+"\n";
-        metadata += Long.toString(this.size)+"\n";
-        metadata += Long.toString(this.create_time)+"\n";
-        metadata += Long.toString(this.modified_time)+"\n";
-        metadata += Long.toString(this.access_time)+"\n";
-        metadata += Integer.toString(this.data_node)+"\n";
+        metadata += Integer.toString(this.id)+" ";
+        metadata += this.filepath +" ";
+        metadata += Integer.toString(this.mode)+" ";
+        metadata += Long.toString(this.size)+" ";
+        metadata += Long.toString(this.create_time)+" ";
+        metadata += Long.toString(this.modified_time)+" ";
+        metadata += Long.toString(this.access_time)+" ";
+        metadata += Integer.toString(this.data_node)+" ";
         for(int bid: this.block_id){
-            metadata += Integer.toString(bid)+"\n";
+            metadata += Integer.toString(bid)+" ";
         }
 
         return metadata;
@@ -126,7 +126,7 @@ public class FileDesc {
 
     public static FileDesc fromString(String str){
         //静态 所以调用构造函数形成新对象
-        String[] metadata = str.split("\n");
+        String[] metadata = str.split(" ");
         int id = Integer.parseInt(metadata[0]);
         String filepath = metadata[1];
         int mode = Integer.parseInt(metadata[2]);
