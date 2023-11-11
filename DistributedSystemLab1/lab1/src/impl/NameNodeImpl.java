@@ -18,7 +18,7 @@ public class NameNodeImpl extends NameNodePOA {
 
     //初始化，读取fsimage并载入
     public NameNodeImpl(){
-        String filepath = "fsimage.json";
+        String filepath = "../data/fsimage.json";
         ObjectMapper objectMapper = new ObjectMapper();
         path_descriptor = new HashMap<>();
 
@@ -46,8 +46,8 @@ public class NameNodeImpl extends NameNodePOA {
             int data_node = 0;
             List<Integer> block_id = new ArrayList<>();
             block_id.add(-1);
-            this.file_descriptor.add(new FileDesc(next_id,mode,0,time_now,
-                    time_now,time_now,filepath,data_node,block_id));
+            this.file_descriptor.add(new FileDesc(next_id,filepath,mode,0,time_now,
+                    time_now,time_now,data_node,block_id));
             descriptor_id = next_id;
         }
         FileDesc file = file_descriptor.get(descriptor_id - 1);

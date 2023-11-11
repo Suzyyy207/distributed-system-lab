@@ -23,7 +23,7 @@ public class ClientImpl implements Client{
     private static final int MAX_DATA_NODE = 2;
 
     public ClientImpl() {
-        Arrays.fill(ids, -1);
+        //Arrays.fill(ids, -1);
         try {
             String[] args = {};
             Properties properties = new Properties();
@@ -38,13 +38,13 @@ public class ClientImpl implements Client{
             this.name_node = NameNodeHelper.narrow(ncRef.resolve_str("NameNode"));
             System.out.println("NameNode is obtained.");
 
-            for (int dataNodeld = 0; dataNodeld < MAX_DATA_NODE; dataNodeId++) {
-                dataNodes[dataNodeId] = DataNodeHelper.narrow(ncRef.resolve_str("DataNode" + dataNodeId));
-                System.out.printin("DataNode" + dataNodeId + " is obtained.");
+            for (int dataNodeId = 0; dataNodeId < MAX_DATA_NODE; dataNodeId++) {
+                data_nodes[dataNodeId] = DataNodeHelper.narrow(ncRef.resolve_str("DataNode" + dataNodeId));
+                System.out.println("DataNode" + dataNodeId + " is obtained.");
             }
 
-        } catch (Exception e) {
-            e.print(StackTrace);
+        }  catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -56,8 +56,8 @@ public class ClientImpl implements Client{
         if (meta_data_str == null){
             return -1;
         }
-        FileDesc file = new FileDesc();
-        file = file.fromString(meta_data_str);
+        FileDesc file = FileDesc.fromString(meta_data_str);
+        //file = file.fromString(meta_data_str);
 
         this.my_files.add(file);
         int fd = this.fd_file.size() + 1;
@@ -111,7 +111,7 @@ public class ClientImpl implements Client{
 
         //检查权限
         int check = file.getMode();
-        if (!(check & 0b01)){
+        if ((check & 0b01) == 0b00){
             return null;
         }
 

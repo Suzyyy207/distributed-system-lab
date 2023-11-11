@@ -1,15 +1,15 @@
-import com.sun.corba.se.spi.orb.ORB;
 import java.util.Properties;
 import impl.*;
 import api.*;
+import java.util.Scanner;
 import java.io.IOException;
 public class ClientLauncher {
     public static void main(String[] args) {
         ClientImpl my_client = new ClientImpl();
         Scanner input = new Scanner(System.in);
-        while(1){
+        while(true){
             String command = input.next();
-            String[] command_args = command.spilt(" ");
+            String[] command_args = command.split(" ");
 
             //退出
             if (command_args[0].equals("exit")){
@@ -45,7 +45,7 @@ public class ClientLauncher {
                     System.out.println("INFO: OPEN not allowed");
                 }
                 else {
-                    System.out.println("INFO: fd="+ fd.toString());
+                    System.out.println("INFO: fd="+ fd);
                 }
                 continue;
             }
@@ -62,7 +62,7 @@ public class ClientLauncher {
                     System.out.println("INFO: READ not allowed");
                     continue;
                 }
-                String file_str = new String(file_data)
+                String file_str = new String(file_data);
                 System.out.println(file_str);
                 continue;
             }
@@ -75,7 +75,7 @@ public class ClientLauncher {
                 }
                 int index1 = command.indexOf(" ");
                 int index2 = command.indexOf(" ", index1 + 1);
-                String append_str = command.subString(index2+1);
+                String append_str = command.substring(index2+1);
                 byte[] append_data = append_str.getBytes();
                 int info = my_client.append(Integer.parseInt(command_args[1]), append_data);
                 if (info == -1){

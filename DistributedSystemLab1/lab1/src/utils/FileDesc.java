@@ -41,8 +41,8 @@ public class FileDesc {
         this.data_node = -1;
         List<Integer> block_id = new ArrayList<>();
     }
-    public FileDesc(long id, int mode, long size, long create_time, long modified_time,
-                    long access_time, String filepath,int data_node, List<Integer> block_id) {
+    public FileDesc(int id, String filepath, int mode, long size, long create_time, long modified_time,
+                    long access_time, int data_node, List<Integer> block_id) {
         this.id = id;
         this.mode = mode;
         this.size = size;
@@ -59,7 +59,7 @@ public class FileDesc {
         return mode;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
@@ -125,18 +125,20 @@ public class FileDesc {
     }
 
     public static FileDesc fromString(String str){
+        //静态 所以调用构造函数形成新对象
         String[] metadata = str.split("\n");
-        //this.id = Long.parseLong(metadata[0]);   //??对final 怎么改变
-        this.filepath = metadata[1];
-        this.mode = Integer.parseInt(metadata[2]);
-        this.size = Long.parseLong(metadata[3]);
-        this.create_time = Long.parseLong(metadata[4]);
-        this.modified_time = Long.parseLong(metadata[5]);
-        this.access_time = Long.parseLong(metadata[6]);
-        this.data_node = Integer.parseInt(metadata[7]);
+        int id = Integer.parseInt(metadata[0]);
+        String filepath = metadata[1];
+        int mode = Integer.parseInt(metadata[2]);
+        long size = Long.parseLong(metadata[3]);
+        long create_time = Long.parseLong(metadata[4]);
+        long modified_time = Long.parseLong(metadata[5]);
+        long access_time = Long.parseLong(metadata[6]);
+        int data_node = Integer.parseInt(metadata[7]);
+        List<Integer> block_id = new ArrayList();
         for (int i = 8; i<metadata.length; i++){
-            this.addBlockID(Integer.parseInt(metadata[i]));
+            block_id.add(Integer.parseInt(metadata[i]));
         }
-        return null;
+        return new FileDesc(id, filepath, mode, size, create_time, modified_time, access_time, data_node, block_id);
     }
 }

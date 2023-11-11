@@ -31,7 +31,7 @@ public class NameNodeLauncher {
 
             // Naming context
             org.omg.CORBA.Object objRef = orb.resolve_initial_references("NameService");
-            NamingContextExt ncRef = NamingcontextExtHelper.narrow(objRef);
+            NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
 
             // bind to Naming
             NameComponent[] path = ncRef.to_name("NameNode");
