@@ -6,9 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.*;
-//import com.fasterxml.jackson.databind.ObjectMapper;
 
-// todo： NameNode要有一个函数实现接受DN的block id信息
 public class NameNodeImpl extends NameNodePOA {
     private List<FileDesc> file_descriptor;   //元数据列表
     private HashMap<String, Integer> path_descriptor;   //file_path -> descriptor
@@ -47,12 +45,19 @@ public class NameNodeImpl extends NameNodePOA {
 
     }
 
+    public void modifyBlockID(String filepath, int new_block_id){
+        int descriptor_id = this.path_descriptor.get(filepath);
+        FileDesc file = file_descriptor.get(descriptor_id - 1);
+        file.addBlockID(new_block_id);
+    }
+
     @Override
     public String open(String filepath, int mode) {
-        int descriptor_id = this.path_descriptor.get(filepath);
-
-        //对于不存在的文件，创建，file的id是index+1
-        if (descriptor_id == null){
+        int descriptor_id = -1;
+        if (this.path_descriptor.containsKey(filepath)){
+            descriptor_id = this.path_descriptor.get(filepath);
+        }
+        else{
             int next_id = this.file_descriptor.size() + 1;
             long time_now = System.currentTimeMillis();
             //todo: 怎么roll data node
@@ -63,6 +68,7 @@ public class NameNodeImpl extends NameNodePOA {
                     time_now,time_now,data_node,block_id));
             descriptor_id = next_id;
         }
+
         FileDesc file = file_descriptor.get(descriptor_id - 1);
 
         //检查文件是否以w模式open过
@@ -76,11 +82,6 @@ public class NameNodeImpl extends NameNodePOA {
         return meta_data;
     }
 
-    public void modifyBlockID(String filepath, int new_block_id){
-        int descriptor_id = this.path_descriptor.get(filepath);
-        FileDesc file = file_descriptor.get(descriptor_id - 1);
-        file.addBlockID(new_block_id);
-    }
 
     @Override
     public void close(String filepath) {
@@ -97,9 +98,9 @@ public class NameNodeImpl extends NameNodePOA {
         file.setMode(0b00);
 
         //更新fsimage
-        String filepath = "../data/fsimage.txt";
+        String fs_file_path = "../data/fsimage.txt";
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fs_file_path))) {
             for (FileDesc my_file : this.file_descriptor) {
                 String data = my_file.toString();
                 writer.write(data);

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,7 +44,7 @@ public class DataNodeImpl extends DataNodePOA {
         Path path = Paths.get(filePath);
         return Files.readAllLines(path).stream()
                 .map(line -> parseByteArrayFromLine(line))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // 解析字符串为字节数组
@@ -105,13 +106,22 @@ public class DataNodeImpl extends DataNodePOA {
     public void update(int block_id){
         byte[] data = this.blocks.get(block_id);
         String file_path = "../data/data_node_"+this.node_id+"/"+block_id+".txt";
-        Path path = Paths.get(filePath);
+        Path path = Paths.get(file_path);
         if (!Files.exists(path)) {
-            Files.createFile(path);
+            try{
+                Files.createFile(path);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+
         }
         for (byte b : data) {
-            Files.writeString(path, String.valueOf(b) + System.lineSeparator(),
-                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+            try{
+                Files.write(path, (String.valueOf(b) + System.lineSeparator()).getBytes(),
+                        java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 

@@ -40,7 +40,7 @@ public class NameNodeLauncher {
 
             // waiting
             orb.run();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
