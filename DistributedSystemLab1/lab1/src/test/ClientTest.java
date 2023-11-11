@@ -1,7 +1,6 @@
 package test;
 
 import api.Client;
-import impl.ClientImpl;
 import org.junit.Before;
 import org.junit.Test;
 import utils.FileSystem;

@@ -66,7 +66,9 @@ public class DataNodeImpl extends DataNodePOA {
 
     public DataNodeImpl(int node_id){
         this.node_id = node_id;
-        String folder_path = "../data/data_node_"+node_id;
+        this.blocks = new ArrayList<>();
+
+        String folder_path = "../src/data/data_node_"+node_id;
         int txt_count = countTxtFiles(folder_path);
         for (int i = 0; i<txt_count; i++){
             String file_path = folder_path+"/"+i+".txt";
@@ -79,22 +81,6 @@ public class DataNodeImpl extends DataNodePOA {
             }
         }
 
-        /*
-        //读json文件
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<String> base64_list = new ArrayList<>();
-        try {
-            base64_list = objectMapper.readValue(new File("../data/data_node_"+node_id+".json"), new ArrayList<String>().getClass());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // 将Base64编码的字符串解码为byte[]数组，并存储到List<byte[]>对象中
-        this.blocks = new ArrayList<>();
-        for (String base64_string : base64_list) {
-            byte[] block = Base64.getDecoder().decode(base64_string);
-            blocks.add(block);
-        }*/
     }
 
     @Override
@@ -105,7 +91,7 @@ public class DataNodeImpl extends DataNodePOA {
 
     public void update(int block_id){
         byte[] data = this.blocks.get(block_id);
-        String file_path = "../data/data_node_"+this.node_id+"/"+block_id+".txt";
+        String file_path = "../src/data/data_node_"+this.node_id+"/"+block_id+".txt";
         Path path = Paths.get(file_path);
         if (!Files.exists(path)) {
             try{
@@ -127,6 +113,16 @@ public class DataNodeImpl extends DataNodePOA {
 
     @Override
     public int append(int block_id, byte[] bytes) {
+        int length_info = 0;
+        for (byte b : bytes) {
+            if (b != 0) {
+                length_info++;
+            } else {
+                break;
+            }
+        }
+        byte[] real_bytes = Arrays.copyOfRange(bytes, 0, length_info);
+
         int new_allocated_id = -1;
 
         //针对之前没有分配过块的文件，先roll一个id
@@ -141,18 +137,17 @@ public class DataNodeImpl extends DataNodePOA {
         byte[] old_data = this.blocks.get(block_id);
         int free_space = 4*1024 - old_data.length;
 
-        if (bytes.length > free_space){
+        if (real_bytes.length > free_space){
             //先装满一个块
-            byte[] new_data = Arrays.copyOfRange(bytes, 0, free_space);
+            byte[] new_data = Arrays.copyOfRange(real_bytes, 0, free_space);
             int old_data_len = old_data.length;
             int new_data_len = new_data.length;
             byte[] all_data = new byte[new_data_len + old_data_len];
             System.arraycopy(old_data, 0, all_data, 0, old_data_len);
             System.arraycopy(new_data, 0, all_data, old_data_len, new_data_len);
             this.blocks.set(block_id,all_data);
-
-            //剩下的装进新的块
-            byte[] left_data = Arrays.copyOfRange(bytes, free_space, bytes.length);
+            byte[] left_data = new byte[4*1024];
+            System.arraycopy(real_bytes, free_space, left_data, 0, real_bytes.length);
             new_allocated_id = this.append(-1, left_data);
         }
         else{

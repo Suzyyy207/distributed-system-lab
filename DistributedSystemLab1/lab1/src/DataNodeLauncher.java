@@ -18,7 +18,7 @@ public class DataNodeLauncher {
         try {
             Properties properties = new Properties();
             properties.put("org.omg.COBRA.ORBInitialHost", "127.0.0.1");
-            properties.put("org.omg.CORBA.ORBInitialPort", "1050");
+            properties.put("org.omg.CORBA.ORBInitialPort", "900");
 
             ORB orb = ORB.init(args, properties);
 

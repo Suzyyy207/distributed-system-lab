@@ -4,6 +4,7 @@ import api.*;
 import utils.*;
 import java.util.HashMap;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -23,12 +24,13 @@ public class ClientImpl implements Client{
     private static final int MAX_DATA_NODE = 2;
 
     public ClientImpl() {
-        //Arrays.fill(ids, -1);
+        this.my_files = new ArrayList<>();
+        this.fd_file = new HashMap<>();
         try {
             String[] args = {};
             Properties properties = new Properties();
             properties.put("org.omg. CORBA. ORBInitialHost", "127.0.0.1"); //ORB IP
-            properties.put("org.omg. CORBA. ORBInitialPort", "1050");
+            properties.put("org.omg. CORBA. ORBInitialPort", "900");
 
             ORB orb = ORB.init(args, properties);
 
@@ -39,8 +41,8 @@ public class ClientImpl implements Client{
             System.out.println("NameNode is obtained.");
 
             for (int dataNodeId = 0; dataNodeId < MAX_DATA_NODE; dataNodeId++) {
-                data_nodes[dataNodeId] = DataNodeHelper.narrow(ncRef.resolve_str("DataNode" + dataNodeId));
-                System.out.println("DataNode" + dataNodeId + " is obtained.");
+                data_nodes[dataNodeId] = DataNodeHelper.narrow(ncRef.resolve_str("DataNode" + (dataNodeId+1)));
+                System.out.println("DataNode" + (dataNodeId+1) + " is obtained.");
             }
 
         }  catch (Exception e) {
@@ -53,7 +55,7 @@ public class ClientImpl implements Client{
     public int open(String filepath, int mode) {
         String meta_data_str;
         meta_data_str = this.name_node.open(filepath, mode);
-        if (meta_data_str == null){
+        if (meta_data_str.equals("")){
             return -1;
         }
         FileDesc file = FileDesc.fromString(meta_data_str);
@@ -89,7 +91,8 @@ public class ClientImpl implements Client{
         int data_length = bytes.length;
         for (int i=0; i<data_length; i = i+4*1024){
             int end =  (i+4*1024 < data_length) ? (i+4*1024) : data_length;
-            byte[] data = Arrays.copyOfRange(bytes, i, end);
+            byte[] data = new byte[4*1024];
+            System.arraycopy(bytes, i, data, 0, end-i);
             int new_id = this.data_nodes[data_node_id].append(append_id, data);
             if (new_id != -1){
                 name_node.modifyBlockID(filepath, new_id);

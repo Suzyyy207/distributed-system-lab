@@ -13,7 +13,7 @@ public class NameNodeLauncher {
         try {
             Properties properties = new Properties();
             properties.put("org.omg.CORBA.ORBInitialHost", "127.0.0.1");//ORB IP
-            properties.put("org.omg.CORBA.ORBInitialPort", "1050"); //ORB port
+            properties.put("org.omg.CORBA.ORBInitialPort", "900"); //ORB port
 
             // init ORB object
             ORB orb = ORB.init(args, properties);

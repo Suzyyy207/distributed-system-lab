@@ -13,12 +13,14 @@ public class NameNodeImpl extends NameNodePOA {
 
     //初始化，读取fsimage并载入
     public NameNodeImpl(){
-        String filepath = "../data/fsimage.txt";
+        this.file_descriptor = new ArrayList<>();
+        this.path_descriptor = new HashMap<>();
+        String filepath = "../src/data/fsimage.txt";
+
         try (FileReader reader = new FileReader(filepath);
              BufferedReader br = new BufferedReader(reader)
         ) {
             String line;
-            //网友推荐更加简洁的写法
             while ((line = br.readLine()) != null) {
                 // 一次读入一行数据
                 String line_str =line.replace("\n", "");
@@ -30,18 +32,7 @@ public class NameNodeImpl extends NameNodePOA {
             e.printStackTrace();
         }
 
-       /* ObjectMapper objectMapper = new ObjectMapper();
-        path_descriptor = new HashMap<>();
-
-        try {
-            List<FileDesc> my_files = objectMapper.readValue(new File(filepath), new TypeReference<List<FileDesc>>() {});
-            for (FileDesc file : my_files) {
-                path_descriptor.put(file.getFilepath(),file.getId());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("load fsimage error");
-        }*/
+        System.out.println(this.file_descriptor.size());
 
     }
 
@@ -54,7 +45,9 @@ public class NameNodeImpl extends NameNodePOA {
     @Override
     public String open(String filepath, int mode) {
         int descriptor_id = -1;
-        if (this.path_descriptor.containsKey(filepath)){
+        boolean is_existed = true;
+
+        if (path_descriptor.containsKey(filepath)){
             descriptor_id = this.path_descriptor.get(filepath);
         }
         else{
@@ -64,20 +57,25 @@ public class NameNodeImpl extends NameNodePOA {
             int data_node = 0;
             List<Integer> block_id = new ArrayList<>();
             block_id.add(-1);
-            this.file_descriptor.add(new FileDesc(next_id,filepath,mode,0,time_now,
-                    time_now,time_now,data_node,block_id));
+            FileDesc new_file = new FileDesc(next_id,filepath,0b00,0,time_now,
+                    time_now,time_now,data_node,block_id);
+            this.file_descriptor.add(new_file);
             descriptor_id = next_id;
+            is_existed = false;
         }
 
         FileDesc file = file_descriptor.get(descriptor_id - 1);
 
         //检查文件是否以w模式open过
         if ((file.getMode() & 0b10) != 0 ){
-            return null;
+            return "";
         }
         file.setMode(mode);
 
-        //todo：传回需要的信息
+        if (is_existed == false) {
+            update();
+        }
+
         String meta_data = file.toString();
         return meta_data;
     }
@@ -97,8 +95,12 @@ public class NameNodeImpl extends NameNodePOA {
         //这里要改，先不动
         file.setMode(0b00);
 
-        //更新fsimage
-        String fs_file_path = "../data/fsimage.txt";
+        update();
+
+    }
+
+    private void update(){
+        String fs_file_path = "../src/data/fsimage.txt";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fs_file_path))) {
             for (FileDesc my_file : this.file_descriptor) {
@@ -111,12 +113,8 @@ public class NameNodeImpl extends NameNodePOA {
             System.err.println("error in fsimage update");
         }
 
-        /*ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            objectMapper.writeValue(new File("fsimage.json"), this.file_descriptor);
-            System.out.println("save fsimage");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
     }
+
+
+
 }
