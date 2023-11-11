@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileReader;
@@ -15,8 +18,67 @@ import utils.*;
 public class DataNodeImpl extends DataNodePOA {
     private List<byte[]> blocks;
     private int node_id;
+
+    private static int countTxtFiles(String folder_path) {
+        File folder = new File(folder_path);
+        if (!folder.exists() || !folder.isDirectory()) {
+            return -1;
+        }
+
+        File[] files = folder.listFiles();
+        int count = 0;
+        if (files != null) {
+            for (File file : files) {
+                // 检查文件是否以.txt为扩展名
+                if (file.isFile() && file.getName().toLowerCase().endsWith(".txt")) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    // 读取文件中的字节数据，每一行对应一个字节数组
+    private static List<byte[]> readBytesFromFile(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        return Files.readAllLines(path).stream()
+                .map(line -> parseByteArrayFromLine(line))
+                .toList();
+    }
+
+    // 解析字符串为字节数组
+    private static byte[] parseByteArrayFromLine(String line) {
+        return line.getBytes();
+    }
+
+    // 将 List<byte[]> 转换为一个大的 byte[]
+    private static byte[] concatenateByteArrays(List<byte[]> byteArrayList) {
+        int totalLength = byteArrayList.stream().mapToInt(byteArray -> byteArray.length).sum();
+        byte[] result = new byte[totalLength];
+        int currentIndex = 0;
+        for (byte[] byteArray : byteArrayList) {
+            System.arraycopy(byteArray, 0, result, currentIndex, byteArray.length);
+            currentIndex += byteArray.length;
+        }
+        return result;
+    }
+
     public DataNodeImpl(int node_id){
         this.node_id = node_id;
+        String folder_path = "../data/data_node_"+node_id;
+        int txt_count = countTxtFiles(folder_path);
+        for (int i = 0; i<txt_count; i++){
+            String file_path = folder_path+"/"+i+".txt";
+            try {
+                List<byte[]> byte_array_list = readBytesFromFile(file_path);
+                byte[] byte_array = concatenateByteArrays(byte_array_list);
+                this.blocks.add(byte_array);
+            } catch (IOException e) {
+                System.err.println("error in read block");
+            }
+        }
+
+        /*
         //读json文件
         ObjectMapper objectMapper = new ObjectMapper();
         List<String> base64_list = new ArrayList<>();
@@ -31,13 +93,26 @@ public class DataNodeImpl extends DataNodePOA {
         for (String base64_string : base64_list) {
             byte[] block = Base64.getDecoder().decode(base64_string);
             blocks.add(block);
-        }
+        }*/
     }
 
     @Override
     public byte[] read(int block_id){
         byte[] data = this.blocks.get(block_id);
         return data;
+    }
+
+    public void update(int block_id){
+        byte[] data = this.blocks.get(block_id);
+        String file_path = "../data/data_node_"+this.node_id+"/"+block_id+".txt";
+        Path path = Paths.get(filePath);
+        if (!Files.exists(path)) {
+            Files.createFile(path);
+        }
+        for (byte b : data) {
+            Files.writeString(path, String.valueOf(b) + System.lineSeparator(),
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        }
     }
 
     @Override
@@ -79,20 +154,7 @@ public class DataNodeImpl extends DataNodePOA {
             this.blocks.set(block_id,all_data);
         }
 
-        //更新本地文件
-        List<String> base64_list = new ArrayList<>();
-        for (byte[]  block: this.blocks) {
-            String base64_string = Base64.getEncoder().encodeToString(block);
-            base64_list.add(base64_string);
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            objectMapper.writeValue(new File("../data/data_node_"+node_id+".json"), base64_list);
-            System.out.println("data_node update!");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        update(block_id);
 
         return new_allocated_id;
     }
