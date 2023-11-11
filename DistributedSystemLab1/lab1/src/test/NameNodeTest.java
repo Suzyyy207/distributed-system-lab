@@ -1,5 +1,4 @@
 package test;
-import utils.FileDesc;
 import api.NameNode;
 import impl.NameNodeImpl;
 import org.junit.Before;
