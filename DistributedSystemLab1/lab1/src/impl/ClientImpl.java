@@ -136,15 +136,31 @@ public class ClientImpl implements Client{
         int all_data_len = 0;
         for (int id: blocks_id){
             byte[] data = data_nodes[data_node_id].read(id);
-            all_data_len += data.length;
+            int length_info = 0;
+            for (byte b : data) {
+                if (b != 0) {
+                    length_info++;
+                } else {
+                    break;
+                }
+            }
+            all_data_len += length_info;
         }
 
         byte[] all_data = new byte[all_data_len];
         int index = 0;
         for (int id: blocks_id){
             byte[] new_data = data_nodes[data_node_id].read(id);
-            System.arraycopy(new_data, 0, all_data, index, new_data.length);
-            index += new_data.length;
+            int length_info = 0;
+            for (byte b : new_data) {
+                if (b != 0) {
+                    length_info++;
+                } else {
+                    break;
+                }
+            }
+            System.arraycopy(new_data, 0, all_data, index, length_info);
+            index += length_info;
         }
 
         return all_data;

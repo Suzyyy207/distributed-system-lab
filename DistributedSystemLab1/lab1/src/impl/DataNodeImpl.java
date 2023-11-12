@@ -36,30 +36,27 @@ public class DataNodeImpl extends DataNodePOA {
         return count;
     }
 
-    // 读取文件中的字节数据，每一行对应一个字节数组
-    private static List<byte[]> readBytesFromFile(String filePath) throws IOException {
-        Path path = Paths.get(filePath);
-        return Files.readAllLines(path).stream()
-                .map(line -> parseByteArrayFromLine(line))
-                .collect(Collectors.toList());
-    }
-
-    // 解析字符串为字节数组
-    private static byte[] parseByteArrayFromLine(String line) {
-        return line.getBytes();
-    }
-
-    // 将 List<byte[]> 转换为一个大的 byte[]
-    private static byte[] concatenateByteArrays(List<byte[]> byteArrayList) {
-        int totalLength = byteArrayList.stream().mapToInt(byteArray -> byteArray.length).sum();
-        byte[] result = new byte[totalLength];
-        int currentIndex = 0;
-        for (byte[] byteArray : byteArrayList) {
-            System.arraycopy(byteArray, 0, result, currentIndex, byteArray.length);
-            currentIndex += byteArray.length;
+    private byte[] decodeBytes(byte[] all_bytes){
+        int length_info = 0;
+        for (byte b : all_bytes) {
+            if (b != 0) {
+                length_info++;
+            } else {
+                break;
+            }
         }
-        return result;
+        byte[] real_bytes = Arrays.copyOfRange(all_bytes, 0, length_info);
+        return real_bytes;
     }
+
+    private byte[] parseBytes(byte[] real_bytes){
+        byte[] all_bytes = new byte[4*1024];
+        for (int i = 0; i<real_bytes.length; i++){
+            all_bytes[i] = real_bytes[i];
+        }
+        return all_bytes;
+    }
+
 
     public DataNodeImpl(int node_id){
         this.node_id = node_id ;
@@ -69,7 +66,21 @@ public class DataNodeImpl extends DataNodePOA {
         int txt_count = countTxtFiles(folder_path);
         for (int i = 0; i<txt_count; i++){
             String file_path = folder_path+"/"+i+".txt";
-            try (FileReader reader = new FileReader(file_path);
+            try {
+                FileInputStream fileInputStream = new FileInputStream(file_path);
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+                long file_size = fileInputStream.getChannel().size();
+                byte[] data = new byte[(int) file_size];
+                bufferedInputStream.read(data);
+                bufferedInputStream.close();
+                fileInputStream.close();
+                this.blocks.add(data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            /*try (FileReader reader = new FileReader(file_path);
                  BufferedReader br = new BufferedReader(reader)
             ) {
                 String line;
@@ -77,7 +88,8 @@ public class DataNodeImpl extends DataNodePOA {
                     String[] line_str =line.split(" ");
                     byte[] block_data = new byte[line_str.length];
                     for (int j=0; j<line_str.length; j++){
-                        byte byte_data = Byte.parseByte(line_str[j]);
+                        byte[] byteValue = String.valueOf(line_str[i]).getBytes();
+                        byte byte_data = byteValue[0];
                         if (byte_data == 0){
                             break;
                         }
@@ -89,7 +101,7 @@ public class DataNodeImpl extends DataNodePOA {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
 
     }
@@ -97,16 +109,12 @@ public class DataNodeImpl extends DataNodePOA {
     @Override
     public byte[] read(int block_id){
         byte[] data = this.blocks.get(block_id);
-        System.out.println(data.length);
-        return data;
+        byte[] all_data = parseBytes(data);
+        return all_data;
     }
 
     public void update(int block_id){
-        //空位补全
         byte[] data = this.blocks.get(block_id);
-        byte[] all_data = new byte[4*1024];
-        System.arraycopy(data, 0, all_data, 0, data.length);
-
 
         String file_path = "../src/data/data_node_"+this.node_id+"/"+block_id+".txt";
         Path path = Paths.get(file_path);
@@ -118,11 +126,14 @@ public class DataNodeImpl extends DataNodePOA {
             }
         }
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file_path))) {
-            for (byte d : all_data) {
-                writer.write(d);
-                writer.write(" ");
-            }
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file_path);
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+
+            bufferedOutputStream.write(data);
+
+            bufferedOutputStream.close();
+            fileOutputStream.close();
         } catch (IOException e) {
             System.err.println("error in block update");
         }
@@ -131,16 +142,7 @@ public class DataNodeImpl extends DataNodePOA {
 
     @Override
     public int append(int block_id, byte[] bytes) {
-        int length_info = 0;
-        for (byte b : bytes) {
-            if (b != 0) {
-                length_info++;
-            } else {
-                break;
-            }
-        }
-        byte[] real_bytes = Arrays.copyOfRange(bytes, 0, length_info);
-
+        byte[] real_bytes = decodeBytes(bytes);
         int new_allocated_id = -1;
 
         //针对之前没有分配过块的文件，先roll一个id
