@@ -100,7 +100,7 @@ public class ClientImpl implements Client{
             //数据更新
             int new_size = file.getSize();
             new_size += end - i;
-            int time_now = (int)System.currentTimeMillis();
+            int time_now = (int)(System.currentTimeMillis()/1000);
 
             file.addBlockID(new_id);
             file.setSize(new_size);

@@ -57,7 +57,7 @@ public class NameNodeImpl extends NameNodePOA {
         }
         else {
             int next_id = this.file_descriptor.size() + 1;
-            int time_now = (int)System.currentTimeMillis();
+            int time_now = (int)(System.currentTimeMillis()/1000);
             //todo: 怎么roll data node
             int data_node = 0;
             List<Integer> block_id = new ArrayList<>();
@@ -90,7 +90,7 @@ public class NameNodeImpl extends NameNodePOA {
         FileDesc file = file_descriptor.get(descriptor_id - 1);
 
         //修改元数据：访问时间/修改时间/模式
-        int time_now = (int)System.currentTimeMillis();
+        int time_now = (int)(System.currentTimeMillis()/1000);
         file.setAccess_time(time_now);
         //这里要改，先不动
         file.setMode(0b00);
