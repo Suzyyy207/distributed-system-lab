@@ -10,11 +10,10 @@
       <change beforePath="$PROJECT_DIR$/orb.db/NC0" beforeDir="false" afterPath="$PROJECT_DIR$/orb.db/NC0" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bin/impl/ClientImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/src/bin/impl/ClientImpl.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bin/impl/DataNodeImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/src/bin/impl/DataNodeImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bin/impl/NameNodeImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/src/bin/impl/NameNodeImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/data_node_1/0.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_node_1/0.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/data/fsimage.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fsimage.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/impl/ClientImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/impl/ClientImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/impl/DataNodeImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/impl/DataNodeImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/impl/NameNodeImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/impl/NameNodeImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +85,7 @@
       <workItem from="1699323000593" duration="2162000" />
       <workItem from="1699365361885" duration="2680000" />
       <workItem from="1699408470417" duration="11077000" />
-      <workItem from="1699668386039" duration="33854000" />
+      <workItem from="1699668386039" duration="37368000" />
     </task>
     <servers />
   </component>

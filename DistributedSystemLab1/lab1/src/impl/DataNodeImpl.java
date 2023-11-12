@@ -79,29 +79,6 @@ public class DataNodeImpl extends DataNodePOA {
                 e.printStackTrace();
             }
 
-
-            /*try (FileReader reader = new FileReader(file_path);
-                 BufferedReader br = new BufferedReader(reader)
-            ) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    String[] line_str =line.split(" ");
-                    byte[] block_data = new byte[line_str.length];
-                    for (int j=0; j<line_str.length; j++){
-                        byte[] byteValue = String.valueOf(line_str[i]).getBytes();
-                        byte byte_data = byteValue[0];
-                        if (byte_data == 0){
-                            break;
-                        }
-                        else {
-                            block_data[i] = byte_data;
-                        }
-                    }
-                    this.blocks.add(block_data);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
         }
 
     }

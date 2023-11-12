@@ -3,6 +3,7 @@ package impl;
 import api.*;
 import utils.*;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.io.File;
@@ -91,6 +92,7 @@ public class ClientImpl implements Client{
 
         int append_id = blocks_id.get(blocks_id.size() - 1);
         int data_length = bytes.length;
+        System.out.println(data_length);
         for (int i=0; i<data_length; i = i+4*1024){
             int end =  (i+4*1024 < data_length) ? (i+4*1024) : data_length;
             byte[] data = new byte[4*1024];
@@ -131,6 +133,13 @@ public class ClientImpl implements Client{
         int data_node_id = file.getData_node();
         List<Integer> blocks_id = file.getBlock_id();
 
+        //处理没有数据的情况
+        if (blocks_id.size() == 1 && blocks_id.get(0) == -1){
+            String info_str = "INFO: There are nothing in this file!";
+            byte[] info_data = info_str.getBytes();
+            return info_data;
+        }
+
         //和DN联系并拼数据
         byte[] old_data = new byte[0];
         int all_data_len = 0;
@@ -166,6 +175,7 @@ public class ClientImpl implements Client{
         return all_data;
     }
 
+
     @Override
     public void close(int fd) {
         FileDesc file = this.fd_file.get(fd);
@@ -179,5 +189,6 @@ public class ClientImpl implements Client{
         }
         this.fd_file.remove(fd);
         this.my_files.remove(file);
+        return;
     }
 }

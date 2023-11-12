@@ -5,11 +5,13 @@ import utils.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Random;
 import java.io.*;
 
 public class NameNodeImpl extends NameNodePOA {
     private List<FileDesc> file_descriptor;   //元数据列表
     private HashMap<String, Integer> path_descriptor;   //file_path -> descriptor
+    private int data_node_max = 2;
 
     //初始化，读取fsimage并载入
     public NameNodeImpl(){
@@ -58,8 +60,8 @@ public class NameNodeImpl extends NameNodePOA {
         else {
             int next_id = this.file_descriptor.size() + 1;
             int time_now = (int)(System.currentTimeMillis()/1000);
-            //todo: 怎么roll data node
-            int data_node = 0;
+            Random random = new Random();
+            int data_node = random.nextInt(data_node_max+1);
             List<Integer> block_id = new ArrayList<>();
             block_id.add(-1);
             FileDesc new_file = new FileDesc(next_id,filepath,0b00,0,time_now,
