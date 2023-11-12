@@ -32,7 +32,6 @@ public class NameNodeImpl extends NameNodePOA {
             e.printStackTrace();
         }
 
-        System.out.println(this.file_descriptor.size());
 
     }
 
@@ -40,17 +39,17 @@ public class NameNodeImpl extends NameNodePOA {
         int descriptor_id = this.path_descriptor.get(filepath);
         FileDesc file = file_descriptor.get(descriptor_id - 1);
         file.addBlockID(new_block_id);
+        update();
     }
 
     @Override
     public String open(String filepath, int mode) {
         int descriptor_id = -1;
-        boolean is_existed = true;
 
         if (path_descriptor.containsKey(filepath)){
             descriptor_id = this.path_descriptor.get(filepath);
         }
-        else{
+        else {
             int next_id = this.file_descriptor.size() + 1;
             long time_now = System.currentTimeMillis();
             //todo: 怎么roll data node
@@ -60,8 +59,8 @@ public class NameNodeImpl extends NameNodePOA {
             FileDesc new_file = new FileDesc(next_id,filepath,0b00,0,time_now,
                     time_now,time_now,data_node,block_id);
             this.file_descriptor.add(new_file);
+            this.path_descriptor.put(filepath, next_id);
             descriptor_id = next_id;
-            is_existed = false;
         }
 
         FileDesc file = file_descriptor.get(descriptor_id - 1);
@@ -70,11 +69,9 @@ public class NameNodeImpl extends NameNodePOA {
         if ((file.getMode() & 0b10) != 0 ){
             return "";
         }
-        file.setMode(mode);
 
-        if (is_existed == false) {
-            update();
-        }
+        file.setMode(mode);
+        update();
 
         String meta_data = file.toString();
         return meta_data;
@@ -108,7 +105,6 @@ public class NameNodeImpl extends NameNodePOA {
                 writer.write(data);
                 writer.newLine();  // 添加换行符
             }
-            System.out.println("data in fsimage");
         } catch (IOException e) {
             System.err.println("error in fsimage update");
         }

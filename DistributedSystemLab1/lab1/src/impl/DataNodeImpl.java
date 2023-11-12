@@ -65,19 +65,33 @@ public class DataNodeImpl extends DataNodePOA {
     }
 
     public DataNodeImpl(int node_id){
-        this.node_id = node_id;
+        this.node_id = node_id ;
         this.blocks = new ArrayList<>();
 
         String folder_path = "../src/data/data_node_"+node_id;
         int txt_count = countTxtFiles(folder_path);
         for (int i = 0; i<txt_count; i++){
             String file_path = folder_path+"/"+i+".txt";
-            try {
-                List<byte[]> byte_array_list = readBytesFromFile(file_path);
-                byte[] byte_array = concatenateByteArrays(byte_array_list);
-                this.blocks.add(byte_array);
+            try (FileReader reader = new FileReader(file_path);
+                 BufferedReader br = new BufferedReader(reader)
+            ) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] line_str =line.split(" ");
+                    byte[] block_data = new byte[line_str.length];
+                    for (int i=0; i<line_str.length; i++){
+                        byte byte_data = Byte.parseByte(line_str[i]);
+                        if (byte_data == 0){
+                            break;
+                        }
+                        else {
+                            block_data[i] = byte_data;
+                        }
+                    }
+                    this.blocks.add(block_data);
+                }
             } catch (IOException e) {
-                System.err.println("error in read block");
+                e.printStackTrace();
             }
         }
 
@@ -86,11 +100,17 @@ public class DataNodeImpl extends DataNodePOA {
     @Override
     public byte[] read(int block_id){
         byte[] data = this.blocks.get(block_id);
+        System.out.println(data.length);
         return data;
     }
 
     public void update(int block_id){
+        //空位补全
         byte[] data = this.blocks.get(block_id);
+        byte[] all_data = new byte[4*1024];
+        System.arraycopy(data, 0, all_data, 0, data.length);
+
+
         String file_path = "../src/data/data_node_"+this.node_id+"/"+block_id+".txt";
         Path path = Paths.get(file_path);
         if (!Files.exists(path)) {
@@ -99,16 +119,17 @@ public class DataNodeImpl extends DataNodePOA {
             } catch (Exception e){
                 e.printStackTrace();
             }
+        }
 
-        }
-        for (byte b : data) {
-            try{
-                Files.write(path, (String.valueOf(b) + System.lineSeparator()).getBytes(),
-                        java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
-            } catch (Exception e){
-                e.printStackTrace();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file_path))) {
+            for (byte d : all_data) {
+                writer.write(d);
+                writer.write(" ");
             }
+        } catch (IOException e) {
+            System.err.println("error in block update");
         }
+
     }
 
     @Override

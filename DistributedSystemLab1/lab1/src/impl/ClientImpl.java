@@ -19,6 +19,7 @@ import java.util.Properties;
 public class ClientImpl implements Client{
     private NameNode name_node;
     private DataNode[] data_nodes = new DataNode[MAX_DATA_NODE];
+    private int fd_count;
     private List<FileDesc> my_files;
     private HashMap<Integer, FileDesc> fd_file;
     private static final int MAX_DATA_NODE = 2;
@@ -26,6 +27,7 @@ public class ClientImpl implements Client{
     public ClientImpl() {
         this.my_files = new ArrayList<>();
         this.fd_file = new HashMap<>();
+        this.fd_count = 0;
         try {
             String[] args = {};
             Properties properties = new Properties();
@@ -59,10 +61,10 @@ public class ClientImpl implements Client{
             return -1;
         }
         FileDesc file = FileDesc.fromString(meta_data_str);
-        //file = file.fromString(meta_data_str);
 
         this.my_files.add(file);
-        int fd = this.fd_file.size() + 1;
+        this.fd_count += 1;
+        int fd = this.fd_count;
         this.fd_file.put(fd, file);
 
         return fd;
@@ -96,6 +98,7 @@ public class ClientImpl implements Client{
             int new_id = this.data_nodes[data_node_id].append(append_id, data);
             if (new_id != -1){
                 name_node.modifyBlockID(filepath, new_id);
+                file.addBlockID(new_id);
                 append_id = new_id;
             }
         }
@@ -125,6 +128,7 @@ public class ClientImpl implements Client{
         byte[] old_data = new byte[0];
         int all_data_len = 0;
         for (int id: blocks_id){
+            System.out.println(id);
             byte[] data = data_nodes[data_node_id].read(id);
             all_data_len += data.length;
         }

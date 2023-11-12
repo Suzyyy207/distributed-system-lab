@@ -100,6 +100,10 @@ public class FileDesc {
     }
 
     public void addBlockID(int new_block_id){
+        int first = this.block_id.get(0);
+        if (first == -1){
+            this.block_id.remove(0);
+        }
         this.block_id.add(new_block_id);
     }
 

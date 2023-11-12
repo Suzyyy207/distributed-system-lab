@@ -24,7 +24,6 @@ public class ClientLauncher {
                 System.out.println("INFO: Mode wrong input");
                 return;
         }
-
         int fd = my_client.open(command_args[1], mode);
         if (fd == -1){
             System.out.println("INFO: OPEN not allowed");
@@ -75,7 +74,9 @@ public class ClientLauncher {
             System.out.println("INFO: Close wrong input");
             return;
         }
-        my_client.close(Integer.parseInt(command_args[1]));
+        int fd = Integer.parseInt(command_args[1]);
+        my_client.close(fd);
+        System.out.println("INFO: fd "+fd+" closed");
         return;
     }
 
