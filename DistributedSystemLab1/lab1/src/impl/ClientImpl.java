@@ -92,7 +92,6 @@ public class ClientImpl implements Client{
 
         int append_id = blocks_id.get(blocks_id.size() - 1);
         int data_length = bytes.length;
-        System.out.println(data_length);
         for (int i=0; i<data_length; i = i+4*1024){
             int end =  (i+4*1024 < data_length) ? (i+4*1024) : data_length;
             byte[] data = new byte[4*1024];

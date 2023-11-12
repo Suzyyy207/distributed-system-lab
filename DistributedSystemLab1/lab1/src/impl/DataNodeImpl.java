@@ -148,11 +148,11 @@ public class DataNodeImpl extends DataNodePOA {
             new_allocated_id = this.append(-1, left_data);
         }
         else{
-            int new_data_len = bytes.length;
+            int new_data_len = real_bytes.length;
             int old_data_len = old_data.length;
             byte[] all_data = new byte[new_data_len + old_data_len];
             System.arraycopy(old_data, 0, all_data, 0, old_data_len);
-            System.arraycopy(bytes, 0, all_data, old_data_len, new_data_len);
+            System.arraycopy(real_bytes, 0, all_data, old_data_len, new_data_len);
             this.blocks.set(block_id,all_data);
         }
 

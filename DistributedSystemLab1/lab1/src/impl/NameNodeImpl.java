@@ -61,7 +61,7 @@ public class NameNodeImpl extends NameNodePOA {
             int next_id = this.file_descriptor.size() + 1;
             int time_now = (int)(System.currentTimeMillis()/1000);
             Random random = new Random();
-            int data_node = random.nextInt(data_node_max+1);
+            int data_node = random.nextInt(data_node_max);
             List<Integer> block_id = new ArrayList<>();
             block_id.add(-1);
             FileDesc new_file = new FileDesc(next_id,filepath,0b00,0,time_now,
