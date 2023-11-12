@@ -35,12 +35,18 @@ public class NameNodeImpl extends NameNodePOA {
 
     }
 
-    public void modifyBlockID(String filepath, int new_block_id){
+    public void modifyBlockInfo(String filepath, int new_block_id, int new_size, int new_time){
         int descriptor_id = this.path_descriptor.get(filepath);
         FileDesc file = file_descriptor.get(descriptor_id - 1);
-        file.addBlockID(new_block_id);
+        if (new_block_id != -1){
+            file.addBlockID(new_block_id);
+        }
+        file.setSize(new_size);
+        file.setModified_time(new_time);
         update();
     }
+
+
 
     @Override
     public String open(String filepath, int mode) {
@@ -51,7 +57,7 @@ public class NameNodeImpl extends NameNodePOA {
         }
         else {
             int next_id = this.file_descriptor.size() + 1;
-            long time_now = System.currentTimeMillis();
+            int time_now = (int)System.currentTimeMillis();
             //todo: 怎么roll data node
             int data_node = 0;
             List<Integer> block_id = new ArrayList<>();
@@ -84,11 +90,8 @@ public class NameNodeImpl extends NameNodePOA {
         FileDesc file = file_descriptor.get(descriptor_id - 1);
 
         //修改元数据：访问时间/修改时间/模式
-        long time_now = System.currentTimeMillis();
+        int time_now = (int)System.currentTimeMillis();
         file.setAccess_time(time_now);
-        if ((file.getMode() & 0b10) != 0){
-            file.setModified_time(time_now);
-        }
         //这里要改，先不动
         file.setMode(0b00);
 

@@ -20,10 +20,10 @@ public class FileDesc {
     final int id;    //每个文件的id
     String filepath;
     int mode;
-    long size; // 文件大小
-    long create_time; // 创建时间
-    long modified_time; // 最后修改时间
-    long access_time; // 最后访问时间
+    int size; // 文件大小
+    int create_time; // 创建时间
+    int modified_time; // 最后修改时间
+    int access_time; // 最后访问时间
     int data_node;
     List<Integer> block_id;//文件数据块所在的dn与block id，采取一一对应关系
     //List<int> data_nodes; // 文件的数据块所在的DataNode列表
@@ -41,8 +41,8 @@ public class FileDesc {
         this.data_node = -1;
         List<Integer> block_id = new ArrayList<>();
     }
-    public FileDesc(int id, String filepath, int mode, long size, long create_time, long modified_time,
-                    long access_time, int data_node, List<Integer> block_id) {
+    public FileDesc(int id, String filepath, int mode, int size, int create_time, int modified_time,
+                    int access_time, int data_node, List<Integer> block_id) {
         this.id = id;
         this.mode = mode;
         this.size = size;
@@ -75,23 +75,27 @@ public class FileDesc {
         return filepath;
     }
 
+    public int getSize(){
+        return size;
+    }
+
     public void setMode(int mode) {
         this.mode = mode;
     }
 
-    public void setAccess_time(long access_time) {
+    public void setAccess_time(int access_time) {
         this.access_time = access_time;
     }
 
-    public void setModified_time(long modified_time) {
+    public void setModified_time(int modified_time) {
         this.modified_time = modified_time;
     }
 
-    public void setSize(long size) {
+    public void setSize(int size) {
         this.size = size;
     }
 
-    public void setCreate_time(long create_time) {
+    public void setCreate_time(int create_time) {
         this.create_time = create_time;
     }
 
@@ -116,10 +120,10 @@ public class FileDesc {
         metadata += Integer.toString(this.id)+" ";
         metadata += this.filepath +" ";
         metadata += Integer.toString(this.mode)+" ";
-        metadata += Long.toString(this.size)+" ";
-        metadata += Long.toString(this.create_time)+" ";
-        metadata += Long.toString(this.modified_time)+" ";
-        metadata += Long.toString(this.access_time)+" ";
+        metadata += Integer.toString(this.size)+" ";
+        metadata += Integer.toString(this.create_time)+" ";
+        metadata += Integer.toString(this.modified_time)+" ";
+        metadata += Integer.toString(this.access_time)+" ";
         metadata += Integer.toString(this.data_node)+" ";
         for(int bid: this.block_id){
             metadata += Integer.toString(bid)+" ";
@@ -134,10 +138,10 @@ public class FileDesc {
         int id = Integer.parseInt(metadata[0]);
         String filepath = metadata[1];
         int mode = Integer.parseInt(metadata[2]);
-        long size = Long.parseLong(metadata[3]);
-        long create_time = Long.parseLong(metadata[4]);
-        long modified_time = Long.parseLong(metadata[5]);
-        long access_time = Long.parseLong(metadata[6]);
+        int size = Integer.parseInt(metadata[3]);
+        int create_time = Integer.parseInt(metadata[4]);
+        int modified_time = Integer.parseInt(metadata[5]);
+        int access_time = Integer.parseInt(metadata[6]);
         int data_node = Integer.parseInt(metadata[7]);
         List<Integer> block_id = new ArrayList();
         for (int i = 8; i<metadata.length; i++){

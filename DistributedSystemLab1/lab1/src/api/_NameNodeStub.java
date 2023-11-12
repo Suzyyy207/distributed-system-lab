@@ -5,7 +5,7 @@ package api;
 * api/_NameNodeStub.java .
 * 由IDL-to-Java 编译器 (可移植), 版本 "3.2"生成
 * 从api.idl
-* 2023年11月11日 星期六 下午11时30分40秒 CST
+* 2023年11月12日 星期日 下午12时56分17秒 CST
 */
 
 public class _NameNodeStub extends org.omg.CORBA.portable.ObjectImpl implements api.NameNode
@@ -51,13 +51,15 @@ public class _NameNodeStub extends org.omg.CORBA.portable.ObjectImpl implements 
             }
   } // close
 
-  public void modifyBlockID (String filepath, int new_block_id)
+  public void modifyBlockInfo (String filepath, int new_block_id, int size, int time)
   {
             org.omg.CORBA.portable.InputStream $in = null;
             try {
-                org.omg.CORBA.portable.OutputStream $out = _request ("modifyBlockID", true);
+                org.omg.CORBA.portable.OutputStream $out = _request ("modifyBlockInfo", true);
                 $out.write_string (filepath);
                 $out.write_long (new_block_id);
+                $out.write_long (size);
+                $out.write_long (time);
                 $in = _invoke ($out);
                 return;
             } catch (org.omg.CORBA.portable.ApplicationException $ex) {
@@ -65,11 +67,11 @@ public class _NameNodeStub extends org.omg.CORBA.portable.ObjectImpl implements 
                 String _id = $ex.getId ();
                 throw new org.omg.CORBA.MARSHAL (_id);
             } catch (org.omg.CORBA.portable.RemarshalException $rm) {
-                modifyBlockID (filepath, new_block_id        );
+                modifyBlockInfo (filepath, new_block_id, size, time        );
             } finally {
                 _releaseReply ($in);
             }
-  } // modifyBlockID
+  } // modifyBlockInfo
 
   // Type-specific CORBA::Object operations
   private static String[] __ids = {

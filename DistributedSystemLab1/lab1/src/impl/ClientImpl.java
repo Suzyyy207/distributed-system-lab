@@ -96,11 +96,18 @@ public class ClientImpl implements Client{
             byte[] data = new byte[4*1024];
             System.arraycopy(bytes, i, data, 0, end-i);
             int new_id = this.data_nodes[data_node_id].append(append_id, data);
-            if (new_id != -1){
-                name_node.modifyBlockID(filepath, new_id);
-                file.addBlockID(new_id);
-                append_id = new_id;
-            }
+
+            //数据更新
+            int new_size = file.getSize();
+            new_size += end - i;
+            int time_now = (int)System.currentTimeMillis();
+
+            file.addBlockID(new_id);
+            file.setSize(new_size);
+            file.setModified_time(time_now);
+
+            name_node.modifyBlockInfo(filepath, new_id, new_size, time_now);
+            append_id = new_id;
         }
 
         return 0;
@@ -128,7 +135,6 @@ public class ClientImpl implements Client{
         byte[] old_data = new byte[0];
         int all_data_len = 0;
         for (int id: blocks_id){
-            System.out.println(id);
             byte[] data = data_nodes[data_node_id].read(id);
             all_data_len += data.length;
         }

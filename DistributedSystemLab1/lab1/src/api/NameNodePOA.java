@@ -5,7 +5,7 @@ package api;
 * api/NameNodePOA.java .
 * 由IDL-to-Java 编译器 (可移植), 版本 "3.2"生成
 * 从api.idl
-* 2023年11月11日 星期六 下午11时30分40秒 CST
+* 2023年11月12日 星期日 下午12时56分17秒 CST
 */
 
 public abstract class NameNodePOA extends org.omg.PortableServer.Servant
@@ -19,7 +19,7 @@ public abstract class NameNodePOA extends org.omg.PortableServer.Servant
   {
     _methods.put ("open", new java.lang.Integer (0));
     _methods.put ("close", new java.lang.Integer (1));
-    _methods.put ("modifyBlockID", new java.lang.Integer (2));
+    _methods.put ("modifyBlockInfo", new java.lang.Integer (2));
   }
 
   public org.omg.CORBA.portable.OutputStream _invoke (String $method,
@@ -52,11 +52,13 @@ public abstract class NameNodePOA extends org.omg.PortableServer.Servant
          break;
        }
 
-       case 2:  // api/NameNode/modifyBlockID
+       case 2:  // api/NameNode/modifyBlockInfo
        {
          String filepath = in.read_string ();
          int new_block_id = in.read_long ();
-         this.modifyBlockID (filepath, new_block_id);
+         int size = in.read_long ();
+         int time = in.read_long ();
+         this.modifyBlockInfo (filepath, new_block_id, size, time);
          out = $rh.createReply();
          break;
        }

@@ -10,10 +10,7 @@ import java.util.stream.Collectors;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.FileReader;
-import java.io.File;
+import java.io.*;
 import utils.*;
 
 public class DataNodeImpl extends DataNodePOA {
@@ -79,8 +76,8 @@ public class DataNodeImpl extends DataNodePOA {
                 while ((line = br.readLine()) != null) {
                     String[] line_str =line.split(" ");
                     byte[] block_data = new byte[line_str.length];
-                    for (int i=0; i<line_str.length; i++){
-                        byte byte_data = Byte.parseByte(line_str[i]);
+                    for (int j=0; j<line_str.length; j++){
+                        byte byte_data = Byte.parseByte(line_str[j]);
                         if (byte_data == 0){
                             break;
                         }
